@@ -48,6 +48,8 @@ def turnOffMotors():
 atexit.register(turnOffMotors)
 
 myMotor = mh.getMotor(3)
+#clockwise == 1 is BACKWARD, 0 is FORWARD, -1 is not moving
+clockwise = -1
 
 # if a video path was not supplied, grab the reference
 # to the webcam
@@ -103,7 +105,7 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
+		
 		# only proceed if the radius meets a minimum size
 		if radius > 10:
 			# draw the circle and centroid on the frame,
@@ -112,16 +114,17 @@ while True:
 				(0, 255, 255), 2)
 			cv2.circle(frame, center, 5, (0, 0, 255), -1)
 		
-		mover=int(300-x)
-		movel=int(x-300)
-		frameCount = frameCount + 1
-		print(int(x))
-		if x > 300 and frameCount == 10:  #64:
-#			while movel > 0:		
+			mover=int(300-x)
+			movel=int(x-300)
+			frameCount = frameCount + 1
+			print(int(x))
+			if x > 300 and frameCount == 10:  #64:
+#				while movel > 0:		
 				frameCount = 0
 				myMotor.run(Adafruit_MotorHAT.RELEASE)
 				myMotor.run(Adafruit_MotorHAT.FORWARD)
 				print "\tmoving camera left..."
+				clockwise = 0
 				#for i in range(movel):
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
@@ -130,12 +133,13 @@ while True:
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
 				myMotor.setSpeed(255)
-		if x < 300 and frameCount == 10: #64
+			if x < 300 and frameCount == 10: #64
 					
 				frameCount = 0
 				myMotor.run(Adafruit_MotorHAT.RELEASE)
 				myMotor.run(Adafruit_MotorHAT.BACKWARD)
 				print "\tmoving camera right.."
+				clockwise = 1
 				#for i in range(mover):
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
@@ -144,6 +148,19 @@ while True:
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
 				myMotor.setSpeed(255)
+		if radius < 10 and clockwise == 1:
+			myMotor.run(Adafruit_MotorHAT.RELEASE)
+			myMotor.run(Adafruit_MotorHAT.FORWARD)
+			print "\treached right edge moving camera counter-clockwise.."
+			clockwise = 0
+			myMotor.setSpeed(255)
+		if radius < 10 and clockwise == 0:
+			myMotor.run(Adafruit_MotorHAT.RELEASE)
+			myMotor.run(Adafruit_MotorHAT.BACKWARD)
+			print "\treached left edge moving camera clockwise.."
+			clockwise = 1
+			myMotor.setSpeed(255)
+
 	# update the points queue
 	pts.appendleft(center)
 
