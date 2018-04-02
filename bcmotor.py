@@ -79,17 +79,21 @@ while True:
 	# resize the frame, blur it, and convert it to the HSV
 	# color space
 	frame = imutils.resize(frame, width=600)
+	cv2.imwrite('frame.jpg', frame)
 	# blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+	
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
+	cv2.imwrite('hsv.jpg', hsv)
 	# construct a mask for the color "green", then perform
 	# a series of dilations and erosions to remove any small
 	# blobs left in the mask
 	# erode and dilate to remove noise
 	mask = cv2.inRange(hsv, greenLower, greenUpper)
+	cv2.imwrite('inRange.jpg', mask)
 	mask = cv2.erode(mask, None, iterations=2)
+	cv2.imwrite('erode.jpg', mask)
 	mask = cv2.dilate(mask, None, iterations=2)
-
+	cv2.imwrite('dilate.jpg', mask)
 	# find contours in the mask and initialize the current
 	# (x, y) center of the ball
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
@@ -188,6 +192,7 @@ while True:
 
 	# show the frame to our screen
 	cv2.imshow("Frame", frame)
+	cv2.imwrite('final.jpg', frame)
 	key = cv2.waitKey(1) & 0xFF
 
 	# if the 'q' key is pressed, stop the loop
