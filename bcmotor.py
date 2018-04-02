@@ -95,6 +95,9 @@ while True:
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 		cv2.CHAIN_APPROX_SIMPLE)[-2]
 	center = None
+	
+	if len(cnts) <= 0:
+		myMotor.run(Adafruit_MotorHAT.RELEASE)
 
 	# only proceed if at least one contour was found
 	if len(cnts) > 0:
@@ -118,7 +121,7 @@ while True:
 			movel=int(x-300)
 			frameCount = frameCount + 1
 			print(int(x))
-			if x > 300 and frameCount == 10:  #64:
+			if int(x) > 350:# and frameCount == 10:  #64:
 #				while movel > 0:		
 				frameCount = 0
 				myMotor.run(Adafruit_MotorHAT.RELEASE)
@@ -133,7 +136,7 @@ while True:
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
 				myMotor.setSpeed(255)
-			if x < 300 and frameCount == 10: #64
+			elif int(x) < 250:# and frameCount == 10: #64
 					
 				frameCount = 0
 				myMotor.run(Adafruit_MotorHAT.RELEASE)
@@ -148,18 +151,23 @@ while True:
 				#	myMotor.setSpeed(i)
 				#	time.sleep(0.01)
 				myMotor.setSpeed(255)
-		if radius < 10 and clockwise == 1:
-			myMotor.run(Adafruit_MotorHAT.RELEASE)
-			myMotor.run(Adafruit_MotorHAT.FORWARD)
-			print "\treached right edge moving camera counter-clockwise.."
-			clockwise = 0
-			myMotor.setSpeed(255)
-		if radius < 10 and clockwise == 0:
-			myMotor.run(Adafruit_MotorHAT.RELEASE)
-			myMotor.run(Adafruit_MotorHAT.BACKWARD)
-			print "\treached left edge moving camera clockwise.."
-			clockwise = 1
-			myMotor.setSpeed(255)
+			if x >= 250 and x<=350:
+				myMotor.run(Adafruit_MotorHAT.RELEASE)
+				#myMotor.setSpeed(0)
+#		if radius > 100 and clockwise == 1:
+#			myMotor.run(Adafruit_MotorHAT.RELEASE)
+#			myMotor.run(Adafruit_MotorHAT.FORWARD)
+#			print "\treached right edge moving camera counter-clockwise.."
+#			clockwise = 0
+#			myMotor.setSpeed(255)
+#			time.sleep(0.1)
+#		elif radius > 100 and clockwise == 0:
+#			myMotor.run(Adafruit_MotorHAT.RELEASE)
+#			myMotor.run(Adafruit_MotorHAT.BACKWARD)
+#			print "\treached left edge moving camera clockwise.."
+#			clockwise = 1
+#			myMotor.setSpeed(255)
+#			time.sleep(0.1)
 
 	# update the points queue
 	pts.appendleft(center)
